@@ -23,3 +23,6 @@ bluetooth.profile.vc.server.enabled=true
 
 # fastbootd
 ro.fastbootd.available=true
+
+## Incremental FS
+ro.incremental.enable=true
