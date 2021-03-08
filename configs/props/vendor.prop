@@ -24,5 +24,8 @@ bluetooth.profile.vc.server.enabled=true
 # fastbootd
 ro.fastbootd.available=true
 
+## FUSE
+persist.sys.fuse.passthrough.enable=true
+
 ## Incremental FS
 ro.incremental.enable=true
