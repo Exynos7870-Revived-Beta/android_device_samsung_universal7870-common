@@ -21,6 +21,9 @@ bluetooth.profile.sap.server.enabled=true
 bluetooth.profile.tbs.server.enabled=true
 bluetooth.profile.vc.server.enabled=true
 
+## Graphics
+ro.vendor.ddk.set.afbc=1
+
 # fastbootd
 ro.fastbootd.available=true
 
