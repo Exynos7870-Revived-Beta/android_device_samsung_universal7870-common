@@ -215,7 +215,8 @@ PRODUCT_PACKAGES += \
     init.vendor.rilchip.rc \
     init.vendor.rilcommon.rc \
     wifi.rc \
-    ueventd.rc
+    ueventd.rc \
+    init.debug.rc
 
 # Recorder
 PRODUCT_PACKAGES += \
