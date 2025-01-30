@@ -1,8 +1,8 @@
 on init
-    rm /cache/logcat.${ro.hardware}.txt
+    rm /cache/logcat.exynos7870.txt
     start logcat_cache
 
-service logcat_cache /system/bin/logcat -b all -f /cache/logcat.${ro.hardware}.txt -v threadtime
+service logcat_cache /system/bin/logcat -b all -f /cache/logcat.exynos7870.txt -v threadtime
     class main
     user root
     group system
