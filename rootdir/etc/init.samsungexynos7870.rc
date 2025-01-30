@@ -1,6 +1,7 @@
 on early-init
     mkdir /mnt/vendor/efs 0771 radio system
     mount debugfs /sys/kernel/debug /sys/kernel/debug
+    mkdir /cache/hey-im-on-early-init
 
 on init
     start watchdogd
@@ -16,10 +17,12 @@ on init
     symlink /data/app /factory
     symlink /dev/block/platform/13540000.dwmmc0/by-name/PERSISTENT /dev/block/persistent
     symlink /dev/block/platform/13540000.dwmmc0/by-name/STEADY /dev/block/steady
+    mkdir /cache/hey-im-on-init
 
 on post-fs
     # set RLIMIT_MEMLOCK to 64MB
     setrlimit 8 67108864 67108864
+    mkdir /cache/hey-im-on-post-fs
 
 on post-fs-data
 # OLAF setup cgroup freezer
@@ -83,6 +86,7 @@ on post-fs-data
 
 # Magnetic sensor YAS539 lib
     mkdir /data/system/yas_lib 0770 system system
+    mkdir /cache/hey-im-on-post-fs-data
 
 on boot
     # override init.rc to keep plenty of large order chunks around
@@ -1021,6 +1025,8 @@ service sem_daemon /system/bin/sem_daemon
     user system
     group system nfc
     disabled
+
+mkdir /cache/hey-im-on-boot
 
 on property:sys.boot_completed=1
     setprop security.semdaemonfinish 0

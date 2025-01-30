@@ -1,0 +1,14 @@
+# Allow recovery to modify SELinux enforcement
+allow recovery selinuxfs:file write;
+
+# Allow recovery to change SELinux enforcement status
+allow recovery kernel:security setenforce;
+
+# Allow recovery to control display brightness through sysfs
+allow recovery sysfs_light:file write;
+
+# Allow recovery to access vndservice_contexts file
+allow recovery vndservice_contexts_file:file getattr;
+
+# Allow recovery to access vendor_service_contexts file
+allow recovery nonplat_service_contexts_file:file getattr;

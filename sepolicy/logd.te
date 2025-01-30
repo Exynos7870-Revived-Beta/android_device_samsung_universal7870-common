@@ -1,0 +1,2 @@
+# Allow logd to access its executable and the linker in rootfs
+allow logd rootfs:file { read execute entrypoint getattr };

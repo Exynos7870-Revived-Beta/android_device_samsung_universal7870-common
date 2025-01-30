@@ -95,3 +95,12 @@ allow init proc_sec:file { rw_file_perms setattr };
 allow init socket_device:sock_file { read write getattr setattr create unlink };
 
 # allow init hal_drm_hwservice:hwservice_manager add;
+
+# Allow init to set checkreqprot on kernel security
+allow init kernel:security setcheckreqprot;
+
+# Allow init to set attributes on rootfs symlinks
+allow init rootfs:lnk_file setattr;
+
+# Allow mounting on functionfs directories (for ADB)
+allow init functionfs:dir mounton;

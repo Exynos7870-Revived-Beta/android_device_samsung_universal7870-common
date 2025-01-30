@@ -3,6 +3,7 @@ on init
     mv /cache/logcat.exynos7870.txt.1 /cache/logcat.exynos7870.txt.2
     mv /cache/logcat.exynos7870.txt /cache/logcat.exynos7870.txt.1
     start logcat_cache
+    mkdir /cache/hey-im-on-init-logcat
 
 service logcat_cache /system/bin/logcat -b all -f /cache/logcat.exynos7870.txt -v threadtime
     class main
