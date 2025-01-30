@@ -1,4 +1,4 @@
-on post-fs
+on init
     rm /cache/logcat.${ro.hardware}.txt
     start logcat_cache
 
