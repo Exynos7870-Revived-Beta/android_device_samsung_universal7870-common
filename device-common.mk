@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 The LineageOS Project
+# Copyright (C) 2025 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# Setup dalvik vm configs.
+$(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
 
 LOCAL_PATH := device/samsung/universal7870-common
 
@@ -87,13 +90,6 @@ PRODUCT_PACKAGES += \
     libtinyalsa \
     libtinycompress
 
-ifeq ($(TARGET_DEVICE_HAS_TFA_SEC_AUDIO_HAL),true)
-#PRODUCT_PACKAGES += \
-#    libaudioroute_sec_helper
-else ifeq ($(TARGET_DEVICE_HAS_SEC_AUDIO_HAL),true)
-#PRODUCT_PACKAGES += \
-#    libaudioroute_sec_helper    
-else
 ifeq ($(TARGET_DEVICE_HAS_OSS_AUDIO_HAL),true)
 PRODUCT_PACKAGES += \
     audio.primary.exynos7870
@@ -101,7 +97,6 @@ ifeq ($(TARGET_DEVICE_HAS_TFA_AMP),true)
 PRODUCT_PACKAGES += \
     audio_amplifier.exynos7870 \
     libtfa98xx
-endif
 endif
 endif
 
@@ -454,8 +449,5 @@ PRODUCT_PACKAGES += \
 # Properties
 -include $(LOCAL_PATH)/vendor_prop.mk
     
-# setup dalvik vm configs.
-$(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
-
-# call the proprietary setup
+# Call the proprietary setup
 $(call inherit-product, vendor/samsung/universal7870-common/universal7870-common-vendor.mk)
