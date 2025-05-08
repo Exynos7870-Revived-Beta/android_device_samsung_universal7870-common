@@ -20,7 +20,7 @@
 
 #include <OMX_Component.h>
 #include <camera/Camera.h>
-#include <camera/CameraParameters.h>
+#include <CameraParameters.h>
 #include <media/stagefright/CameraSource.h>
 
 namespace android {
