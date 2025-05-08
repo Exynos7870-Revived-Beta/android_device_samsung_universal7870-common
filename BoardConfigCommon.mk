@@ -30,6 +30,9 @@ TARGET_BOARD_PLATFORM := universal7870
 TARGET_SOC := exynos7870
 include hardware/samsung_slsi-linaro/config/BoardConfig7870.mk
 
+# Props
+TARGET_VENDOR_PROP += $(COMMON_PATH)/configs/props/vendor.prop
+
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
