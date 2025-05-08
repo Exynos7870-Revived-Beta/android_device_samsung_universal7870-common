@@ -234,6 +234,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PROPERTY_OVERRIDES += \
      drm.service.enabled = true
 
+# Fastbootd
+PRODUCT_PACKAGES += \
+    fastbootd
+
 # Flat device tree for boot image
 PRODUCT_HOST_PACKAGES += \
     dtbhtoolExynos
