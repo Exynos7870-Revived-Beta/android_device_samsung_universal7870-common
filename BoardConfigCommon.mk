@@ -31,7 +31,7 @@ TARGET_SOC := exynos7870
 include hardware/samsung_slsi-linaro/config/BoardConfig7870.mk
 
 # Props
-TARGET_VENDOR_PROP += $(COMMON_PATH)/configs/props/vendor.prop
+TARGET_VENDOR_PROP += $(LOCAL_PATH)/configs/props/vendor.prop
 
 # Architecture
 TARGET_ARCH := arm64
