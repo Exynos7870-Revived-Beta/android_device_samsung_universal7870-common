@@ -61,10 +61,6 @@ system/lib/omx/libOMX.Exynos.VP9.Decoder.so:vendor/lib/omx/libOMX.Exynos.VP9.Dec
 system/lib64/omx/libOMX.Exynos.WMV.Decoder.so:vendor/lib64/omx/libOMX.Exynos.WMV.Decoder.so
 system/lib/omx/libOMX.Exynos.WMV.Decoder.so:vendor/lib/omx/libOMX.Exynos.WMV.Decoder.so
 
-# camera
-system/lib/libhwjpeg.so:vendor/lib/libhwjpeg.so
-
-
 ###FILE###:proprietary-files_a7y17lte_secapp.txt
 # DRM
 
