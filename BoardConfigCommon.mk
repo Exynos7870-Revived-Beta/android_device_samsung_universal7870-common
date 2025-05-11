@@ -183,5 +183,5 @@ BOARD_USES_VENDORIMAGE := true
 TARGET_LD_SHIM_LIBS += \
     /system/bin/mediaserver|/system/lib/libstagefright_shim.so
 
-# Wifi
+# Wi-Fi
 BOARD_HAVE_SAMSUNG_WIFI := true
