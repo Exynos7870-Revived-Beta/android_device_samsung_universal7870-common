@@ -10,12 +10,6 @@
 on post-fs-data
     mkdir /data/vendor/secradio 0770 radio radio
 
-# handle crash reason
-    chown radio system /sys/module/modem_utils/parameters/cp_crash_info
-    chmod 0660 /sys/module/modem_utils/parameters/cp_crash_info
-    chown radio system /sys/module/modem_utils/parameters/cp_crash_link
-    chmod 0660 /sys/module/modem_utils/parameters/cp_crash_link
-
 on property:ro.vendor.multisim.simslotcount=1
     stop ril-daemon1
 
@@ -24,21 +18,3 @@ on property:hwservicemanager.ready=false
 
 on property:hwservicemanager.ready=false && property:ro.vendor.multisim.simslotcount=2
     restart ril-daemon1
-
-service network_config /vendor/bin/secril_config_svc NetworkConfig
-    user radio
-    group radio
-    oneshot
-    disabled
-
-service sim_config /vendor/bin/secril_config_svc SimConfig
-    user radio
-    group radio
-    oneshot
-    disabled
-
-on fs
-    exec_start sim_config
-
-on post-fs-data
-    exec_start network_config

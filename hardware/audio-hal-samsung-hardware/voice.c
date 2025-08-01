@@ -298,26 +298,26 @@ void set_voice_session_volume(struct voice_session *session, float volume)
 {
     enum _SoundType sound_type;
 
-    switch (session->out_device) {
-        case AUDIO_DEVICE_OUT_EARPIECE:
-            sound_type = SOUND_TYPE_VOICE;
-            break;
-        case AUDIO_DEVICE_OUT_SPEAKER:
-            sound_type = SOUND_TYPE_SPEAKER;
-            break;
-        case AUDIO_DEVICE_OUT_WIRED_HEADSET:
-        case AUDIO_DEVICE_OUT_WIRED_HEADPHONE:
-            sound_type = SOUND_TYPE_HEADSET;
-            break;
-        case AUDIO_DEVICE_OUT_BLUETOOTH_SCO:
-        case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET:
-        case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_CARKIT:
-        case AUDIO_DEVICE_OUT_ALL_SCO:
-            sound_type = SOUND_TYPE_BTVOICE;
-            break;
-        default:
-            sound_type = SOUND_TYPE_VOICE;
-    }
+
+     switch (session->out_device) {
+         case AUDIO_DEVICE_OUT_EARPIECE:
+             sound_type = SOUND_TYPE_VOICE;
+             break;
+         case AUDIO_DEVICE_OUT_SPEAKER:
+             sound_type = SOUND_TYPE_SPEAKER;
+             break;
+         case AUDIO_DEVICE_OUT_WIRED_HEADSET:
+         case AUDIO_DEVICE_OUT_WIRED_HEADPHONE:
+             sound_type = SOUND_TYPE_HEADSET;
+             break;
+         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO:
+         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET:
+         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_CARKIT:
+             sound_type = SOUND_TYPE_BTVOICE;
+             break;
+         default:
+             sound_type = SOUND_TYPE_VOICE;
+     }
 
     ril_set_call_volume(&session->ril, sound_type, volume);
 }

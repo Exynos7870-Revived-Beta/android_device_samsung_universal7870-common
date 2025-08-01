@@ -30,6 +30,8 @@ TARGET_BOARD_PLATFORM := universal7870
 TARGET_SOC := exynos7870
 include hardware/samsung_slsi-linaro/config/BoardConfig7870.mk
 
+# Temporary fix - disable VINTF enforcement
+PRODUCT_ENFORCE_VINTF_MANIFEST := false
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
@@ -52,6 +54,8 @@ BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
 
 # Libbootimg
+TARGET_KERNEL_CLANG_COMPILE := false
+
 BOARD_CUSTOM_BOOTIMG := true
 BOARD_CUSTOM_BOOTIMG_MK := hardware/samsung/mkbootimg.mk
 BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x01000000 --tags_offset 0x00000100
@@ -73,15 +77,11 @@ TARGET_LINUX_KERNEL_VERSION := 3.18
 # Kernel config
 TARGET_KERNEL_SOURCE := kernel/samsung/exynos7870
 
-# HIDL
-DEVICE_MATRIX_FILE := $(LOCAL_PATH)/configs/vintf/compatibility_matrix.xml
-PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
-
 # Use these flags if the board has a ext4 partition larger than 2gb
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
-TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/configs/config.fs
+TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/config.fs
 
 # Partitions
 BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432
@@ -111,8 +111,7 @@ BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 TARGET_RELEASETOOLS_EXTENSIONS := $(COMMON_PATH)
 
 # VINTF
-DEVICE_MANIFEST_FILE := $(COMMON_PATH)/manifest.xml
-PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
+DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
 
 # Audio
 USE_XML_AUDIO_POLICY_CONF := 1
@@ -180,8 +179,11 @@ BOARD_SECCOMP_POLICY := $(LOCAL_PATH)/seccomp
 
 # SELinux
 include device/lineage/sepolicy/exynos/sepolicy.mk
-include device/samsung_slsi/sepolicy/sepolicy.mk
+include device/samsung/universal7870-common/sepolicy_slsi_exynos7870/sepolicy.mk
+#include device/samsung_slsi/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS := $(LOCAL_PATH)/sepolicy
+# Check if your device.mk or BoardConfig.mk includes:
+BOARD_SEPOLICY_DIRS += device/samsung/universal7870-common/sepolicy/vendor
 
 # Treble
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
