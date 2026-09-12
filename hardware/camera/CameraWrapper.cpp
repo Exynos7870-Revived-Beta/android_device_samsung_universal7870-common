@@ -114,6 +114,17 @@ static int camera_get_number_of_cameras(void)
 static const camera_module_callbacks_t *gCameraCallbacks = NULL;
 static camera_metadata_t *gFrontCameraCharacteristics = NULL;
 
+bool has_front_flash() {
+    static int sHasFrontFlash = -1;
+    if (sHasFrontFlash == -1) {
+        sHasFrontFlash = (access("/sys/class/camera/flash/front_torch_flash", W_OK) == 0 ||
+                          access("/sys/class/camera/flash/front_flash", W_OK) == 0 ||
+                          access("/sys/class/camera/flash/front_torch_flash", F_OK) == 0 ||
+                          access("/sys/class/camera/flash/front_flash", F_OK) == 0) ? 1 : 0;
+    }
+    return sHasFrontFlash == 1;
+}
+
 int set_front_torch_state(bool enabled) {
     const char *paths[] = {
         "/sys/class/camera/flash/front_torch_flash",
@@ -213,7 +224,7 @@ static int camera_get_camera_info(int camera_id, struct camera_info *info)
     if (check_vendor_module())
         return 0;
     int ret = gVendorModule->get_camera_info(camera_id, info);
-    if (ret == 0 && info && camera_id == 1) {
+    if (ret == 0 && info && camera_id == 1 && has_front_flash()) {
         if (!gFrontCameraCharacteristics && info->static_camera_characteristics) {
             gFrontCameraCharacteristics = create_augmented_camera_info_metadata(info->static_camera_characteristics);
         }
@@ -234,7 +245,9 @@ static int camera_set_callbacks(const camera_module_callbacks_t *callbacks)
     if (check_vendor_module())
         return 0;
     int ret = gVendorModule->set_callbacks(callbacks);
-    camera_notify_torch_status(1, TORCH_MODE_STATUS_AVAILABLE_OFF);
+    if (has_front_flash()) {
+        camera_notify_torch_status(1, TORCH_MODE_STATUS_AVAILABLE_OFF);
+    }
     return ret;
 }
 
@@ -262,6 +275,9 @@ static int camera_set_torch_mode(const char* camera_id, bool enabled)
 
     int id = atoi(camera_id);
     if (id == 1) {
+        if (!has_front_flash()) {
+            return -ENOSYS;
+        }
         int res = set_front_torch_state(enabled);
         if (res == 0) {
             camera_notify_torch_status(1, enabled ? TORCH_MODE_STATUS_AVAILABLE_ON : TORCH_MODE_STATUS_AVAILABLE_OFF);

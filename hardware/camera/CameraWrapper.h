@@ -27,5 +27,4 @@ static android::Mutex gCameraWrapperLock;
 
 int set_front_torch_state(bool enabled);
 void camera_notify_torch_status(int camera_id, int new_status);
-
-
+bool has_front_flash();

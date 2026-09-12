@@ -19,6 +19,7 @@
 #define LOG_TAG "Camera3Wrapper"
 #include <cutils/log.h>
 
+#include <system/camera_metadata.h>
 #include "CameraWrapper.h"
 #include "Camera3Wrapper.h"
 
@@ -26,6 +27,8 @@ typedef struct wrapper_camera3_device {
     camera3_device_t base;
     int id;
     camera3_device_t *vendor;
+    bool front_flash_active;
+    bool front_flash_requested;
 } wrapper_camera3_device_t;
 
 #define VENDOR_CALL(device, func, ...) ({ \
@@ -104,8 +107,88 @@ static int camera3_process_capture_request(const camera3_device_t *device, camer
     ALOGV("%s->%zu->%zu", __FUNCTION__, (uintptr_t)device,
         (uintptr_t)(((wrapper_camera3_device_t*)device)->vendor));
 
-    if (!device)
+    if (!device || !request)
         return -1;
+
+    wrapper_camera3_device_t *wrapper_dev = (wrapper_camera3_device_t*) device;
+
+    if (wrapper_dev->id == 1 && has_front_flash()) {
+        camera3_capture_request_t modified_request = *request;
+        camera_metadata_t *cloned_settings = NULL;
+
+        if (request->settings != NULL) {
+            cloned_settings = clone_camera_metadata(request->settings);
+            if (cloned_settings != NULL) {
+                camera_metadata_entry_t entry;
+
+                // Check and sanitize flash mode
+                uint8_t flash_mode = ANDROID_FLASH_MODE_OFF;
+                if (find_camera_metadata_entry(cloned_settings, ANDROID_FLASH_MODE, &entry) == 0) {
+                    flash_mode = entry.data.u8[0];
+                    if (flash_mode != ANDROID_FLASH_MODE_OFF) {
+                        uint8_t off = ANDROID_FLASH_MODE_OFF;
+                        update_camera_metadata_entry(cloned_settings, entry.index, &off, 1, NULL);
+                    }
+                }
+
+                // Check and sanitize AE mode
+                uint8_t ae_mode = ANDROID_CONTROL_AE_MODE_ON;
+                if (find_camera_metadata_entry(cloned_settings, ANDROID_CONTROL_AE_MODE, &entry) == 0) {
+                    ae_mode = entry.data.u8[0];
+                    if (ae_mode == ANDROID_CONTROL_AE_MODE_ON_AUTO_FLASH ||
+                        ae_mode == ANDROID_CONTROL_AE_MODE_ON_ALWAYS_FLASH ||
+                        ae_mode == ANDROID_CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE) {
+                        wrapper_dev->front_flash_requested = true;
+                        uint8_t on = ANDROID_CONTROL_AE_MODE_ON;
+                        update_camera_metadata_entry(cloned_settings, entry.index, &on, 1, NULL);
+                    } else if (ae_mode == ANDROID_CONTROL_AE_MODE_OFF ||
+                               ae_mode == ANDROID_CONTROL_AE_MODE_ON) {
+                        wrapper_dev->front_flash_requested = false;
+                    }
+                }
+
+                // Check and sanitize AE precapture trigger
+                if (find_camera_metadata_entry(cloned_settings, ANDROID_CONTROL_AE_PRECAPTURE_TRIGGER, &entry) == 0) {
+                    uint8_t ae_trigger = entry.data.u8[0];
+                    if (ae_trigger == ANDROID_CONTROL_AE_PRECAPTURE_TRIGGER_START) {
+                        uint8_t idle = ANDROID_CONTROL_AE_PRECAPTURE_TRIGGER_IDLE;
+                        update_camera_metadata_entry(cloned_settings, entry.index, &idle, 1, NULL);
+                    }
+                }
+
+                // Check capture intent
+                uint8_t capture_intent = ANDROID_CONTROL_CAPTURE_INTENT_PREVIEW;
+                if (find_camera_metadata_entry(cloned_settings, ANDROID_CONTROL_CAPTURE_INTENT, &entry) == 0) {
+                    capture_intent = entry.data.u8[0];
+                }
+
+                // Manage front LED torch state
+                if (flash_mode == ANDROID_FLASH_MODE_TORCH) {
+                    set_front_torch_state(true);
+                    wrapper_dev->front_flash_active = true;
+                } else if (capture_intent == ANDROID_CONTROL_CAPTURE_INTENT_STILL_CAPTURE &&
+                           (wrapper_dev->front_flash_requested || flash_mode == ANDROID_FLASH_MODE_SINGLE)) {
+                    set_front_torch_state(true);
+                    wrapper_dev->front_flash_active = true;
+                } else if (wrapper_dev->front_flash_active &&
+                           capture_intent != ANDROID_CONTROL_CAPTURE_INTENT_STILL_CAPTURE &&
+                           flash_mode != ANDROID_FLASH_MODE_TORCH) {
+                    set_front_torch_state(false);
+                    wrapper_dev->front_flash_active = false;
+                }
+
+                modified_request.settings = cloned_settings;
+            }
+        }
+
+        int ret = VENDOR_CALL(device, process_capture_request, &modified_request);
+
+        if (cloned_settings != NULL) {
+            free_camera_metadata(cloned_settings);
+        }
+
+        return ret;
+    }
 
     return VENDOR_CALL(device, process_capture_request, request);
 }
@@ -140,6 +223,12 @@ static int camera3_flush(const camera3_device_t* device)
     if (!device)
         return -1;
 
+    wrapper_camera3_device_t *wrapper_dev = (wrapper_camera3_device_t*) device;
+    if (wrapper_dev->id == 1 && wrapper_dev->front_flash_active) {
+        set_front_torch_state(false);
+        wrapper_dev->front_flash_active = false;
+    }
+
     return VENDOR_CALL(device, flush);
 }
 
@@ -160,7 +249,11 @@ static int camera3_device_close(hw_device_t *device)
     wrapper_dev = (wrapper_camera3_device_t*) device;
 
     if (wrapper_dev->id == 1) {
-        camera_notify_torch_status(1, TORCH_MODE_STATUS_AVAILABLE_OFF);
+        set_front_torch_state(false);
+        wrapper_dev->front_flash_active = false;
+        if (has_front_flash()) {
+            camera_notify_torch_status(1, TORCH_MODE_STATUS_AVAILABLE_OFF);
+        }
     }
 
     wrapper_dev->vendor->common.close((hw_device_t*)wrapper_dev->vendor);
@@ -251,7 +344,7 @@ int camera3_device_open(const hw_module_t *module, const char *name,
         camera3_ops->flush = camera3_flush;
 
         *device = &camera3_device->base.common;
-        if (cameraid == 1) {
+        if (cameraid == 1 && has_front_flash()) {
             set_front_torch_state(false);
             camera_notify_torch_status(1, TORCH_MODE_STATUS_NOT_AVAILABLE);
         }

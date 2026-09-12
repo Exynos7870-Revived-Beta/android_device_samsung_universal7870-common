@@ -892,7 +892,7 @@ on fs
     chown system radio /sys/class/camera/rear/rear_moduleid
     chown system system /sys/class/camera/rear/rear_hwparam
     chown system radio /sys/class/camera/flash/rear_flash
-    chown system radio /sys/class/camera/flash/front_flash
+    chown cameraserver system /sys/class/camera/flash/front_flash
     chown cameraserver system /sys/class/camera/flash/rear_torch_flash
     chown cameraserver system /sys/class/camera/flash/front_torch_flash
     chmod 0664 /sys/class/camera/flash/rear_flash
