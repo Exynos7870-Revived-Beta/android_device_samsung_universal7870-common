@@ -895,6 +895,10 @@ on fs
     chown system radio /sys/class/camera/flash/front_flash
     chown cameraserver system /sys/class/camera/flash/rear_torch_flash
     chown cameraserver system /sys/class/camera/flash/front_torch_flash
+    chmod 0664 /sys/class/camera/flash/rear_flash
+    chmod 0664 /sys/class/camera/flash/front_flash
+    chmod 0664 /sys/class/camera/flash/rear_torch_flash
+    chmod 0664 /sys/class/camera/flash/front_torch_flash
     chown system radio /sys/class/camera/front/front_camfw
     chown system radio /sys/class/camera/front/front_camfw_full
     chown system radio /sys/class/camera/front/front_checkfw_factory

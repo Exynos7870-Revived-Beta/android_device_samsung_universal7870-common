@@ -34,3 +34,7 @@ allow kernel device:dir create_dir_perms;
 # sysfs sec
 allow kernel sysfs_sec_key:dir r_dir_perms;
 allow kernel sysfs_sec_key:file r_file_perms;
+
+# sysfs virtual (hall_detect)
+allow kernel sysfs_virtual:dir r_dir_perms;
+allow kernel sysfs_virtual:file r_file_perms;

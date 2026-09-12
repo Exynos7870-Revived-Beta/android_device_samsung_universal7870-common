@@ -18,7 +18,7 @@
  */
 
 #define LOG_TAG "audio_hw_primary"
-/*#define LOG_NDEBUG 0*/
+#define LOG_NDEBUG 0
 /*#define VERY_VERY_VERBOSE_LOGGING*/
 #ifdef VERY_VERY_VERBOSE_LOGGING
 #define ALOGVV ALOGV
@@ -28,6 +28,7 @@
 
 #define _GNU_SOURCE
 #include <errno.h>
+#include <signal.h>
 #include <pthread.h>
 #include <stdint.h>
 #include <sys/time.h>
@@ -458,12 +459,21 @@ static int mixer_init(struct audio_device *adev)
 
             sprintf(mixer_path, "/vendor/etc/mixer_paths_%d.xml", card);
             if (access(mixer_path, F_OK) == -1) {
-                ALOGW("%s: Failed to open mixer paths from %s, retrying with legacy location",
-                      __func__, mixer_path);
+                sprintf(mixer_path, "/vendor/etc/mixer_paths.xml");
+            }
+            if (access(mixer_path, F_OK) == -1) {
+                sprintf(mixer_path, "/vendor/etc/mixer_paths_rev03.xml");
+            }
+            if (access(mixer_path, F_OK) == -1) {
+                ALOGW("%s: Failed to open mixer paths from vendor, retrying with legacy location",
+                      __func__);
                 sprintf(mixer_path, "/system/etc/mixer_paths_%d.xml", card);
                 if (access(mixer_path, F_OK) == -1) {
-                    ALOGE("%s: Failed to load a mixer paths configuration, your system will crash",
-                          __func__);
+                    sprintf(mixer_path, "/system/etc/mixer_paths.xml");
+                    if (access(mixer_path, F_OK) == -1) {
+                        ALOGE("%s: Failed to load a mixer paths configuration, your system will crash",
+                              __func__);
+                    }
                 }
             }
 
@@ -4212,6 +4222,7 @@ static bool period_size_is_plausible_for_low_latency(int period_size)
 static int adev_open(const hw_module_t *module, const char *name,
                      hw_device_t **device)
 {
+    signal(SIGPIPE, SIG_IGN);
     ALOGV("%s: enter", __func__);
     if (strcmp(name, AUDIO_HARDWARE_INTERFACE) != 0) return -EINVAL;
 

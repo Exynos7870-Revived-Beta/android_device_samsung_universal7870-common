@@ -202,7 +202,7 @@
 /sys/devices/virtual/thermal/cooling_device1(/.*)? u:object_r:sysfs_virtual:s0
 /sys/devices/virtual/android_usb/android0(/.*)? u:object_r:sysfs_virtual:s0
 /sys/devices/virtual/fingerprint/fingerprint(/.*)? u:object_r:sysfs_virtual:s0
-/sys/devices/virtual/camera/flash/rear_torch_flash(/.*)? u:object_r:sysfs_virtual:s0
+/sys/devices/virtual/camera/flash(/.*)?            u:object_r:sysfs_virtual:s0
 
 # virtual
 /sys/devices/virtual(/.*)?    u:object_r:sysfs_virtual:s0

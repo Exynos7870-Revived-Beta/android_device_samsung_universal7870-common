@@ -191,7 +191,10 @@ BOARD_USES_VENDORIMAGE := true
 
 # Shim
 TARGET_LD_SHIM_LIBS += \
-    /system/bin/mediaserver|/system/lib/libstagefright_shim.so
+    /system/bin/mediaserver|/system/lib/libstagefright_shim.so \
+    /vendor/lib/libexynoscamera.so|/vendor/lib/libexynoscamera_shim.so \
+    /vendor/lib/libexynoscamera3.so|/vendor/lib/libexynoscamera_shim.so \
+    /vendor/lib/hw/camera.vendor.exynos7870.so|/vendor/lib/libexynoscamera_shim.so
 
 # Wifi
 BOARD_HAVE_SAMSUNG_WIFI := true

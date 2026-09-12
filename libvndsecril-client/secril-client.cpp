@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <cutils/sockets.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <string.h>
@@ -471,7 +472,7 @@ int Connect_QRILD(HRilClient client) {
 
     // Open client socket and connect to server.
     //client_prv->sock = socket_loopback_client(RILD_PORT, SOCK_STREAM);
-    client_prv->sock = socket_local_client(MULTI_CLIENT_Q_SOCKET_NAME, ANDROID_SOCKET_NAMESPACE_ABSTRACT, SOCK_STREAM);
+    client_prv->sock = socket_local_client(MULTI_CLIENT_SOCKET_NAME, ANDROID_SOCKET_NAMESPACE_ABSTRACT, SOCK_STREAM);
 
     if (client_prv->sock < 0) {
         RLOGE("%s: Connecting failed. %s(%d)", __FUNCTION__, strerror(errno), errno);
@@ -1882,7 +1883,7 @@ static int blockingWrite(int fd, const void *buffer, size_t len) {
     while (writeOffset < len) {
         do
         {
-            written = write(fd, toWrite + writeOffset, len - writeOffset);
+            written = send(fd, toWrite + writeOffset, len - writeOffset, MSG_NOSIGNAL);
         } while (written < 0 && errno == EINTR);
 
         if (written >= 0) {

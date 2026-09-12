@@ -4,8 +4,8 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-cc_library_shared {
-    name: "libcamera_metadata_helper",
+cc_defaults {
+    name: "libcamera_metadata_helper_defaults",
     proprietary: true,
     defaults: ["hidl_defaults"],
     srcs: [
@@ -24,4 +24,15 @@ cc_library_shared {
         "libcamera_metadata",
     ],
     include_dirs: ["system/media/private/camera/include"],
+}
+
+cc_library_shared {
+    name: "libcamera_metadata_helper",
+    defaults: ["libcamera_metadata_helper_defaults"],
+}
+
+cc_library_shared {
+    name: "libcamera_client.vendor",
+    stem: "libcamera_client",
+    defaults: ["libcamera_metadata_helper_defaults"],
 }

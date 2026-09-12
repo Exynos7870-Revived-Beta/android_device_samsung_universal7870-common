@@ -20,30 +20,30 @@
 #define SAMSUNG_AUDIO_H
 
 /*
- * Sound card specific defines.
+ * Sound card specific defines for Exynos 7870.
  *
- * This is an example configuration for a WolfsonMicro WM1814 sound card.
- * Codec: Vegas
- *
- * If you driver does not support one of the devices, the id should not be
- * defined.
+ * Kernel DAI mapping:
+ *   DAI 0: universal7870-cod3025x (Playback & Capture) -> PCM 0
+ *   DAI 1: universal7870-cod3025x-sec (Deep buffer) -> PCM 1
+ *   DAI 2: cp (Voice call) -> PCM 2
+ *   DAI 3: bt (Bluetooth audio) -> PCM 3
  */
 
 #define MIXER_CARD 0
 #define SOUND_CARD 0
 
 /* Playback */
-#define SOUND_DEEP_BUFFER_DEVICE 3
-#define SOUND_PLAYBACK_DEVICE 4
-#define SOUND_PLAYBACK_SCO_DEVICE 2
+#define SOUND_PLAYBACK_DEVICE 0
+#define SOUND_DEEP_BUFFER_DEVICE 1
+#define SOUND_PLAYBACK_SCO_DEVICE 3
 
 /* Capture */
 #define SOUND_CAPTURE_DEVICE 0
-#define SOUND_CAPTURE_SCO_DEVICE 2
+#define SOUND_CAPTURE_SCO_DEVICE 3
 
 /* Voice calls */
-#define SOUND_PLAYBACK_VOICE_DEVICE 1
-#define SOUND_CAPTURE_VOICE_DEVICE 1
+#define SOUND_PLAYBACK_VOICE_DEVICE 2
+#define SOUND_CAPTURE_VOICE_DEVICE 2
 
 /* Wideband AMR callback */
 #ifndef RIL_UNSOL_SNDMGR_WB_AMR_REPORT

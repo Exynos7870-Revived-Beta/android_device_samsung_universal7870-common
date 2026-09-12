@@ -95,7 +95,17 @@ void set_voice_session_audio_path(struct voice_session *session)
         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO:
         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET:
         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_CARKIT:
-            device_type = SOUND_AUDIO_PATH_BLUETOOTH;
+            if (session->vdata != NULL && session->vdata->bluetooth_wb) {
+                if (session->vdata->bluetooth_nrec)
+                    device_type = SOUND_AUDIO_PATH_BLUETOOTH_WB;
+                else
+                    device_type = SOUND_AUDIO_PATH_BLUETOOTH_WB_NO_NR;
+            } else {
+                if (session->vdata != NULL && session->vdata->bluetooth_nrec)
+                    device_type = SOUND_AUDIO_PATH_BLUETOOTH;
+                else
+                    device_type = SOUND_AUDIO_PATH_BLUETOOTH_NO_NR;
+            }
             break;
         default:
             /* if output device isn't supported, use earpiece by default */

@@ -25,3 +25,7 @@ using ::android::hardware::camera::common::V1_0::helper::Size;
 
 static android::Mutex gCameraWrapperLock;
 
+int set_front_torch_state(bool enabled);
+void camera_notify_torch_status(int camera_id, int new_status);
+
+

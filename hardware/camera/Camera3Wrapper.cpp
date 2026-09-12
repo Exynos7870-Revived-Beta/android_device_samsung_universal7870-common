@@ -159,6 +159,10 @@ static int camera3_device_close(hw_device_t *device)
 
     wrapper_dev = (wrapper_camera3_device_t*) device;
 
+    if (wrapper_dev->id == 1) {
+        camera_notify_torch_status(1, TORCH_MODE_STATUS_AVAILABLE_OFF);
+    }
+
     wrapper_dev->vendor->common.close((hw_device_t*)wrapper_dev->vendor);
     if (wrapper_dev->base.ops)
         free(wrapper_dev->base.ops);
@@ -247,6 +251,10 @@ int camera3_device_open(const hw_module_t *module, const char *name,
         camera3_ops->flush = camera3_flush;
 
         *device = &camera3_device->base.common;
+        if (cameraid == 1) {
+            set_front_torch_state(false);
+            camera_notify_torch_status(1, TORCH_MODE_STATUS_NOT_AVAILABLE);
+        }
     }
 
     return rv;

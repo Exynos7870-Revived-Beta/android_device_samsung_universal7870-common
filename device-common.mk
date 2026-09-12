@@ -125,6 +125,7 @@ PRODUCT_PACKAGES += \
     libstagefright_shim \
     camera.exynos7870 \
     libcamera_metadata_helper \
+    libcamera_client.vendor \
     libcsc \
     libhwjpeg \
     libacryl \
@@ -213,9 +214,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vendor.lineage.fastcharge@1.0-service.samsung
 
-# Touch features
-PRODUCT_PACKAGES += \
-    vendor.lineage.touch@1.0-service.exynos7870
+# Touch features (disabled)
+# PRODUCT_PACKAGES += \
+#     vendor.lineage.touch@1.0-service.exynos7870
 
 # FlipFlap
 PRODUCT_PACKAGES += \
@@ -242,9 +243,8 @@ PRODUCT_SOONG_NAMESPACES += \
     hardware/google/pixel \
     hardware/samsung/aidl/power-libperfmgr
 
-# Configstore
+# vndservicemanager
 PRODUCT_PACKAGES += \
-    android.hardware.configstore@1.1-service \
     vndservicemanager
 
 # Healthd
@@ -284,6 +284,10 @@ PRODUCT_PACKAGES += \
     ebtables \
     ethertypes \
     libebtc
+
+# Bluetooth HAL
+PRODUCT_COPY_FILES += \
+    hardware/interfaces/bluetooth/1.0/default/android.hardware.bluetooth@1.0-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/android.hardware.bluetooth@1.0-service.rc
 
 # OpenMAX IL configuration files
 PRODUCT_COPY_FILES += \
@@ -336,9 +340,11 @@ PRODUCT_PACKAGES += \
     fstab.samsungexynos7870 \
     init.baseband.rc \
     init.samsungexynos7870.rc \
+    init.samsungexynos7870.hw.rc \
     init.samsungexynos7870.usb.rc \
     init.wifi.rc \
     ueventd.samsungexynos7870.rc \
+    ueventd.samsungexynos7870.etc.rc \
     init.vendor.rilchip.rc \
     init.vendor.rilcommon.rc
 
