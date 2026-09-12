@@ -419,6 +419,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libnl
 
+# LineageOS OTA Updater
+PRODUCT_PROPERTY_OVERRIDES += \
+    lineage.updater.uri=https://raw.githubusercontent.com/Exynos7870-Revived-Beta/OTA/main/{device}.json
+
 # Properties
 -include $(LOCAL_PATH)/vendor_prop.mk
 
